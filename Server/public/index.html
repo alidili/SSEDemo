@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ch">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Push</title>
+</head>
+<body>
+
+  <div>
+    <h2>Request:</h2>
+    <input type="text" id="messageInput">
+    <button onclick="sendMessage()">发送消息</button>
+  </div>
+
+  <div id="responseContainer">
+    <h2>Response:</h2>
+    <pre id="responseContent"></pre>
+  </div>
+
+  <script>
+    function sendMessage() {
+      const messageInput = document.getElementById('messageInput');
+      const responseContent = document.getElementById('responseContent');
+
+      // 发送 POST 请求到 /push 接口
+      fetch('/push', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `message=${encodeURIComponent(messageInput.value)}`,
+      })
+      .then(response => response.text())
+      .then(data => {
+        // 更新页面上的响应内容
+        responseContent.textContent = data;
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        responseContent.textContent = 'An error occurred.';
+      });
+    }
+  </script>
+
+</body>
+</html>
