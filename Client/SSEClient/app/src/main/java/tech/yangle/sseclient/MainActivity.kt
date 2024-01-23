@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
             Thread {
                 run {
                     val request = Request.Builder()
-                        .url(binding.etUrl.toString().trim())
+                        .url(binding.etUrl.text.toString())
                         .build()
                     val okHttpClient = OkHttpClient.Builder().also {
                         it.connectTimeout(1, TimeUnit.DAYS)
@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
                     val realEventSource = RealEventSource(request, object : EventSourceListener() {
                         override fun onOpen(eventSource: EventSource, response: Response) {
                             super.onOpen(eventSource, response)
-                            binding.tvMessage.append("已连接 \n")
+                            showMessage("已连接")
                         }
 
                         override fun onEvent(
@@ -55,12 +55,12 @@ class MainActivity : AppCompatActivity() {
                             data: String
                         ) {
                             super.onEvent(eventSource, id, type, data)
-                            binding.tvMessage.append("收到消息: $data \n")
+                            showMessage(data)
                         }
 
                         override fun onClosed(eventSource: EventSource) {
                             super.onClosed(eventSource)
-                            binding.tvMessage.append("已断开 \n")
+                            showMessage("已断开")
                         }
 
                         override fun onFailure(
@@ -69,13 +69,19 @@ class MainActivity : AppCompatActivity() {
                             response: Response?
                         ) {
                             super.onFailure(eventSource, t, response)
-                            binding.tvMessage.append("连接失败 ${t?.message} \n")
+                            showMessage("连接失败 ${t?.message}")
                         }
                     })
 
                     realEventSource.connect(okHttpClient)
                 }
             }.start()
+        }
+    }
+
+    private fun showMessage(message: String) {
+        runOnUiThread {
+            binding.tvMessage.append("$message \n")
         }
     }
 }
