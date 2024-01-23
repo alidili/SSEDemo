@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
             Thread {
                 run {
                     val request = Request.Builder()
-                        .url("http://10.135.192.64:3000/events")
+                        .url(binding.etUrl.toString().trim())
                         .build()
                     val okHttpClient = OkHttpClient.Builder().also {
                         it.connectTimeout(1, TimeUnit.DAYS)
